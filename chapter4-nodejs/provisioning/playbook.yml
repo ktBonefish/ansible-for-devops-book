@@ -2,10 +2,13 @@
 - hosts: all
   become: true
 
+  vars_files:
+    - vars.yml
+
   vars:
     node_apps_location: /user/local/opt/node
 
-  tasks:
+  pre_tasks:
     - name: Install EPEL repo.
       yum:
         name: epel-release
@@ -26,18 +29,10 @@
         name: firewalld
         state: stopped
 
-    - name: install node.js and npm
-      yum:
-        name: npm
-        state: present
-        enablerepo: epel
+  roles:
+    - nodejs
 
-    - name: install foreever
-      npm:
-        name: foreever
-        global: yes
-        state: present
-
+  tasks:
     - name: Ensure node.js app folder exists.
       file:
         path: "{{ node_apps_location }}"
